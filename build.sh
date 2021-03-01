@@ -28,7 +28,7 @@
 
 set -e
 
-IMAGE_NAME="ghcr.io/hsr-project/tmc_wrs_docker"
+IMAGE_NAME="palbator_tmc_simulator"
 
 BUILD_DATE=`date +%Y%m%d`
 BUILD_ARGS=""

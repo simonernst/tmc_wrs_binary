@@ -77,6 +77,13 @@ RUN mkdir /wrs_ws
 ADD src /wrs_ws/src
 RUN cd /wrs_ws/src && source /opt/ros/$ROS_DISTRO/setup.bash && catkin_init_workspace || true
 #RUN cd /wrs_ws && source /opt/ros/$ROS_DISTRO/setup.bash && rosdep update && rosdep install --from-paths src --ignore-src -r -y
+
+RUN cd /wrs_ws/src &&\
+    source /opt/ros/$ROS_DISTRO/setup.bash &&\
+    git clone -b melodic-devel https://github.com/Robocup-Lyontech/Palbator_simulation &&\
+    cd .. &&\
+    rosdep install --from-paths src --ignore-src --rosdistro melodic --skip-keys "pal_gazebo_plugins speed_limit_node sensor_to_cloud pmb2_rgbd_sensors pal_vo_server pal_karto pal_usb_utils pal_local_planner pal_filters hokuyo_node rrbot_launch robot_pose pal_pcl rviz_plugin_covariance pal-orbbec-openni2 slam_toolbox" -y 
+
 RUN cd /wrs_ws && source /opt/ros/$ROS_DISTRO/setup.bash && catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0
 
 ADD entrypoint-wrs.sh /entrypoint.sh
@@ -86,7 +93,7 @@ ENTRYPOINT ["/entrypoint.sh"]
 #ADD filterable-rosmaster.py /opt/ros/melodic/bin/
 #RUN rm /opt/ros/$ROS_DISTRO/bin/rosmaster && ln -s /opt/ros/$ROS_DISTRO/bin/filterable-rosmaster.py /opt/ros/$ROS_DISTRO/bin/rosmaster
 
-RUN source /opt/ros/$ROS_DISTRO/setup.bash && rosrun tmc_gazebo_task_evaluators setup_score_widget
+#RUN source /opt/ros/$ROS_DISTRO/setup.bash && rosrun tmc_gazebo_task_evaluators setup_score_widget
 
 ADD supervisord.conf /etc/supervisor/supervisord.conf
 
