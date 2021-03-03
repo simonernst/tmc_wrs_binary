@@ -42,6 +42,7 @@ RUN sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install --no-install-recommends -y \
+    python-catkin-tools \
     ros-melodic-gazebo-ros ros-melodic-gazebo-plugins ros-melodic-gazebo-ros-control libgazebo9-dev libignition-transport4-dev libpoco-dev python-scipy libgsl-dev \
     ros-melodic-dwa-local-planner \
     ros-melodic-eigen-conversions \
@@ -73,18 +74,21 @@ RUN apt-get update && \
     apt-get autoremove -y && \
     apt-get clean
 
-RUN mkdir /wrs_ws
-ADD src /wrs_ws/src
-RUN cd /wrs_ws/src && source /opt/ros/$ROS_DISTRO/setup.bash && catkin_init_workspace || true
+RUN mkdir -p /root/wrs_ws/src
+#ADD src /root/wrs_ws/src
+#RUN cd /root/wrs_ws/src && source /opt/ros/$ROS_DISTRO/setup.bash && catkin_init_workspace || true
 #RUN cd /wrs_ws && source /opt/ros/$ROS_DISTRO/setup.bash && rosdep update && rosdep install --from-paths src --ignore-src -r -y
 
-RUN cd /wrs_ws/src &&\
+RUN cd /root/wrs_ws/src &&\
     source /opt/ros/$ROS_DISTRO/setup.bash &&\
     git clone -b melodic-devel https://github.com/Robocup-Lyontech/Palbator_simulation &&\
     cd .. &&\
     rosdep install --from-paths src --ignore-src --rosdistro melodic --skip-keys "pal_gazebo_plugins speed_limit_node sensor_to_cloud pmb2_rgbd_sensors pal_vo_server pal_karto pal_usb_utils pal_local_planner pal_filters hokuyo_node rrbot_launch robot_pose pal_pcl rviz_plugin_covariance pal-orbbec-openni2 slam_toolbox" -y 
 
-RUN cd /wrs_ws && source /opt/ros/$ROS_DISTRO/setup.bash && catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0
+#RUN cd /root/wrs_ws && source /opt/ros/$ROS_DISTRO/setup.bash && catkin_make install -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/opt/ros/$ROS_DISTRO -DCATKIN_ENABLE_TESTING=0
+
+RUN cd /root/wrs_ws && source /opt/ros/$ROS_DISTRO/setup.bash && catkin build
+COPY map /root/.pal/pmb2_maps/configurations/ycb/.
 
 ADD entrypoint-wrs.sh /entrypoint.sh
 
