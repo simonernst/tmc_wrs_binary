@@ -26,8 +26,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 set -e
-
 source /opt/ros/$ROS_DISTRO/setup.bash
+source /root/wrs_ws/devel/setup.bash
 source /usr/share/gazebo/setup.sh
 
 # make rosmaster accesible from the host
